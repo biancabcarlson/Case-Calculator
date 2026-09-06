@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="autocomplete" content="off">
+
     <title>Case Calculator</title>
 
     <style>
@@ -152,59 +154,71 @@
 
         <h2>Case Figures</h2>
 
-        <div class="grid">
+        <form id="caseForm" autocomplete="off">
 
-            <div>
-                <label for="grossExposure">Gross Exposure</label>
-                <input
-                    id="grossExposure"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Enter amount"
-                >
+            <div class="grid">
+
+                <div>
+                    <label for="grossExposure">Gross Exposure</label>
+                    <input
+                        id="grossExposure"
+                        name="gross-exposure"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter amount"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div>
+                    <label for="confirmedLoss">Confirmed Loss</label>
+                    <input
+                        id="confirmedLoss"
+                        name="confirmed-loss"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter amount"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div>
+                    <label for="preventedLoss">Prevented Loss</label>
+                    <input
+                        id="preventedLoss"
+                        name="prevented-loss"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter amount"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div>
+                    <label for="recovered">Recovered</label>
+                    <input
+                        id="recovered"
+                        name="recovered"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter amount"
+                        autocomplete="off"
+                    >
+                </div>
+
             </div>
 
-            <div>
-                <label for="confirmedLoss">Confirmed Loss</label>
-                <input
-                    id="confirmedLoss"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Enter amount"
-                >
-            </div>
+            <br>
 
-            <div>
-                <label for="preventedLoss">Prevented Loss</label>
-                <input
-                    id="preventedLoss"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Enter amount"
-                >
-            </div>
+            <button type="submit">
+                Calculate Case
+            </button>
 
-            <div>
-                <label for="recovered">Recovered</label>
-                <input
-                    id="recovered"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Enter amount"
-                >
-            </div>
-
-        </div>
-
-        <br>
-
-        <button onclick="calculateCase()">
-            Calculate Case
-        </button>
+        </form>
 
         <div id="error" class="error"></div>
 
@@ -217,57 +231,33 @@
         <div class="result-grid">
 
             <div class="result">
-                <div class="result-label">
-                    Total Loss Impact
-                </div>
-                <div class="result-value" id="totalLoss">
-                    $0.00
-                </div>
+                <div class="result-label">Total Loss Impact</div>
+                <div class="result-value" id="totalLoss">$0.00</div>
             </div>
 
             <div class="result">
-                <div class="result-label">
-                    Total Mitigation
-                </div>
-                <div class="result-value" id="totalMitigation">
-                    $0.00
-                </div>
+                <div class="result-label">Total Mitigation</div>
+                <div class="result-value" id="totalMitigation">$0.00</div>
             </div>
 
             <div class="result">
-                <div class="result-label">
-                    Remaining Exposure
-                </div>
-                <div class="result-value" id="remainingExposure">
-                    $0.00
-                </div>
+                <div class="result-label">Remaining Exposure</div>
+                <div class="result-value" id="remainingExposure">$0.00</div>
             </div>
 
             <div class="result">
-                <div class="result-label">
-                    Recovery Rate
-                </div>
-                <div class="result-value" id="recoveryRate">
-                    0.00%
-                </div>
+                <div class="result-label">Recovery Rate</div>
+                <div class="result-value" id="recoveryRate">0.00%</div>
             </div>
 
             <div class="result">
-                <div class="result-label">
-                    Prevention Rate
-                </div>
-                <div class="result-value" id="preventionRate">
-                    0.00%
-                </div>
+                <div class="result-label">Prevention Rate</div>
+                <div class="result-value" id="preventionRate">0.00%</div>
             </div>
 
             <div class="result">
-                <div class="result-label">
-                    Mitigation Rate
-                </div>
-                <div class="result-value" id="mitigationRate">
-                    0.00%
-                </div>
+                <div class="result-label">Mitigation Rate</div>
+                <div class="result-value" id="mitigationRate">0.00%</div>
             </div>
 
         </div>
@@ -278,6 +268,27 @@
 
 <script>
 
+const form = document.getElementById("caseForm");
+const errorBox = document.getElementById("error");
+const results = document.getElementById("results");
+
+/*
+    Always start with completely empty fields.
+    This also clears values restored by the browser.
+*/
+window.addEventListener("pageshow", function () {
+    form.reset();
+
+    document.getElementById("grossExposure").value = "";
+    document.getElementById("confirmedLoss").value = "";
+    document.getElementById("preventedLoss").value = "";
+    document.getElementById("recovered").value = "";
+
+    results.style.display = "none";
+    errorBox.style.display = "none";
+});
+
+
 function money(value) {
     return new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -285,7 +296,9 @@ function money(value) {
     }).format(value);
 }
 
+
 function getValue(id) {
+
     const input = document.getElementById(id);
     const value = input.value.trim();
 
@@ -293,19 +306,19 @@ function getValue(id) {
         throw new Error("Please enter an amount in every field.");
     }
 
-    const number = parseFloat(value);
+    const number = Number(value);
 
-    if (Number.isNaN(number) || number < 0) {
+    if (!Number.isFinite(number) || number < 0) {
         throw new Error("Please enter valid non-negative amounts.");
     }
 
     return number;
 }
 
-function calculateCase() {
 
-    const errorBox = document.getElementById("error");
-    const results = document.getElementById("results");
+form.addEventListener("submit", function (event) {
+
+    event.preventDefault();
 
     errorBox.style.display = "none";
 
@@ -343,6 +356,7 @@ function calculateCase() {
                 ? 0
                 : (totalMitigation / grossExposure) * 100;
 
+
         document.getElementById("totalLoss").textContent =
             money(totalLoss);
 
@@ -368,8 +382,10 @@ function calculateCase() {
         errorBox.textContent = error.message;
         errorBox.style.display = "block";
         results.style.display = "none";
+
     }
-}
+
+});
 
 </script>
 
