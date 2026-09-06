@@ -1,142 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="autocomplete" content="off">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Calculator</title>
 
-    <title>Case Calculator</title>
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+body {
+    margin: 0;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
 
-        body {
-            margin: 0;
-            padding: 24px;
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            color: #222;
-        }
+.container {
+    max-width: 850px;
+    margin: 0 auto;
+}
 
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
+h1 {
+    margin: 0 0 8px;
+}
 
-        h1 {
-            margin-bottom: 8px;
-        }
+.intro {
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
 
-        .intro {
-            color: #666;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
 
-        .card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
 
-        h2 {
-            margin-top: 0;
-            font-size: 20px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
 
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
 
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-        }
+input:focus {
+    outline: none;
+    border-color: #555;
+}
 
-        input:focus {
-            outline: none;
-            border-color: #555;
-        }
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
 
-        button {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 6px;
-            background: #222;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+button:hover {
+    opacity: 0.9;
+}
 
-        button:hover {
-            opacity: 0.9;
-        }
+.results {
+    display: none;
+}
 
-        .results {
-            display: none;
-        }
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
 
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
+.result {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+}
 
-        .result {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 16px;
-        }
+.result-label {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
 
-        .result-label {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
+.result-value {
+    font-size: 22px;
+    font-weight: 700;
+}
 
-        .result-value {
-            font-size: 22px;
-            font-weight: 700;
-        }
+.error {
+    display: none;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    background: #fbeaea;
+    border: 1px solid #e0b4b4;
+    color: #8a1f1f;
+}
 
-        .error {
-            display: none;
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 6px;
-            background: #fbeaea;
-            border: 1px solid #e0b4b4;
-            color: #8a1f1f;
-        }
+@media (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 16px;
-            }
-
-            .grid,
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    .grid,
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -154,71 +152,59 @@
 
         <h2>Case Figures</h2>
 
-        <form id="caseForm" autocomplete="off">
+        <div class="grid">
 
-            <div class="grid">
-
-                <div>
-                    <label for="grossExposure">Gross Exposure</label>
-                    <input
-                        id="grossExposure"
-                        name="gross-exposure"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Enter amount"
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div>
-                    <label for="confirmedLoss">Confirmed Loss</label>
-                    <input
-                        id="confirmedLoss"
-                        name="confirmed-loss"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Enter amount"
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div>
-                    <label for="preventedLoss">Prevented Loss</label>
-                    <input
-                        id="preventedLoss"
-                        name="prevented-loss"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Enter amount"
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div>
-                    <label for="recovered">Recovered</label>
-                    <input
-                        id="recovered"
-                        name="recovered"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="Enter amount"
-                        autocomplete="off"
-                    >
-                </div>
-
+            <div>
+                <label for="grossExposure">Gross Exposure</label>
+                <input
+                    id="grossExposure"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
             </div>
 
-            <br>
+            <div>
+                <label for="confirmedLoss">Confirmed Loss</label>
+                <input
+                    id="confirmedLoss"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
 
-            <button type="submit">
-                Calculate Case
-            </button>
+            <div>
+                <label for="preventedLoss">Prevented Loss</label>
+                <input
+                    id="preventedLoss"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
 
-        </form>
+            <div>
+                <label for="recovered">Recovered</label>
+                <input
+                    id="recovered"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+        </div>
+
+        <br>
+
+        <button type="button" onclick="calculateCase()">
+            Calculate Case
+        </button>
 
         <div id="error" class="error"></div>
 
@@ -268,27 +254,6 @@
 
 <script>
 
-const form = document.getElementById("caseForm");
-const errorBox = document.getElementById("error");
-const results = document.getElementById("results");
-
-/*
-    Always start with completely empty fields.
-    This also clears values restored by the browser.
-*/
-window.addEventListener("pageshow", function () {
-    form.reset();
-
-    document.getElementById("grossExposure").value = "";
-    document.getElementById("confirmedLoss").value = "";
-    document.getElementById("preventedLoss").value = "";
-    document.getElementById("recovered").value = "";
-
-    results.style.display = "none";
-    errorBox.style.display = "none";
-});
-
-
 function money(value) {
     return new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -296,29 +261,27 @@ function money(value) {
     }).format(value);
 }
 
-
 function getValue(id) {
 
     const input = document.getElementById(id);
-    const value = input.value.trim();
 
-    if (value === "") {
+    if (input.value.trim() === "") {
         throw new Error("Please enter an amount in every field.");
     }
 
-    const number = Number(value);
+    const value = Number(input.value);
 
-    if (!Number.isFinite(number) || number < 0) {
+    if (!Number.isFinite(value) || value < 0) {
         throw new Error("Please enter valid non-negative amounts.");
     }
 
-    return number;
+    return value;
 }
 
+function calculateCase() {
 
-form.addEventListener("submit", function (event) {
-
-    event.preventDefault();
+    const errorBox = document.getElementById("error");
+    const results = document.getElementById("results");
 
     errorBox.style.display = "none";
 
@@ -356,7 +319,6 @@ form.addEventListener("submit", function (event) {
                 ? 0
                 : (totalMitigation / grossExposure) * 100;
 
-
         document.getElementById("totalLoss").textContent =
             money(totalLoss);
 
@@ -384,8 +346,7 @@ form.addEventListener("submit", function (event) {
         results.style.display = "none";
 
     }
-
-});
+}
 
 </script>
 
