@@ -1,5 +1,4 @@
 # Case-Calculator
-# Case Calculator
 
 A lightweight investigative utility that handles the repetitive arithmetic investigators perform when quantifying case impact.
 
