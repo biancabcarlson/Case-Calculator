@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+.container {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin: 0 0 8px;
+}
+
+.intro {
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #555;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.results {
+    display: none;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.result {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.result-label {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.result-value {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.error {
+    display: none;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    background: #fbeaea;
+    border: 1px solid #e0b4b4;
+    color: #8a1f1f;
+}
+
+.tools-footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.tools-footer a {
+    color: #222;
+    text-decoration: none;
+    border-bottom: 1px solid #ccc;
+}
+
+.tools-footer a:hover {
+    border-bottom-color: #222;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
+
+    .grid,
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Case Calculator</h1>
+
+    <p class="intro">
+        Enter case-level financial figures to automatically calculate
+        totals, remaining exposure, and mitigation percentages.
+    </p>
+
+    <div class="card">
+
+        <h2>Case Figures</h2>
+
+        <div class="grid">
+
+            <div>
+                <label for="grossExposure">Gross Exposure</label>
+                <input
+                    id="grossExposure"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+            <div>
+                <label for="confirmedLoss">Confirmed Loss</label>
+                <input
+                    id="confirmedLoss"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+            <div>
+                <label for="preventedLoss">Prevented Loss</label>
+                <input
+                    id="preventedLoss"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+            <div>
+                <label for="recovered">Recovered</label>
+                <input
+                    id="recovered"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+        </div>
+
+        <br>
+
+        <button type="button" onclick="calculateCase()">
+            Calculate Case
+        </button>
+
+        <div id="error" class="error"></div>
+
+    </div>
+
+    <div id="results" class="card results">
+
+        <h2>Calculated Results</h2>
+
+        <div class="result-grid">
+
+            <div class="result">
+                <div class="result-label">Total Loss Impact</div>
+                <div class="result-value" id="totalLoss">$0.00</div>
+            </div>
+
+            <div class="result">
+                <div class="result-label">Total Mitigation</div>
+                <div class="result-value" id="totalMitigation">$0.00</div>
+            </div>
+
+            <div class="result">
+                <div class="result-label">Remaining Exposure</div>
+                <div class="result-value" id="remainingExposure">$0.00</div>
+            </div>
+
+            <div class="result">
+                <div class="result-label">Recovery Rate</div>
+                <div class="result-value" id="recoveryRate">0.00%</div>
+            </div>
+
+            <div class="result">
+                <div class="result-label">Prevention Rate</div>
+                <div class="result-value" id="preventionRate">0.00%</div>
+            </div>
+
+            <div class="result">
+                <div class="result-label">Mitigation Rate</div>
+                <div class="result-value" id="mitigationRate">0.00%</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="tools-footer">
+        More tools:
+        <a href="https://biancabcarlson.github.io/Report-Template-Filler/">Report Template Filler</a> ·
+        <a href="https://biancabcarlson.github.io/OSINT-Query-Fanout/">OSINT Query Fanout</a> ·
+        <a href="https://biancabcarlson.github.io/Case-Doc-Tracker/">Case Doc Tracker</a> ·
+        <a href="https://biancabcarlson.github.io/Entity-Name-Matcher/">Entity Name Matcher</a> ·
+        <a href="https://biancabcarlson.github.io/Case-Timeline-Builder/">Case Timeline Builder</a>
+    </div>
+
+</div>
+
+<script>
+
+function money(value) {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+    }).format(value);
+}
+
+function getValue(id) {
+
+    const input = document.getElementById(id);
+
+    if (input.value.trim() === "") {
+        throw new Error("Please enter an amount in every field.");
+    }
+
+    const value = Number(input.value);
+
+    if (!Number.isFinite(value) || value < 0) {
+        throw new Error("Please enter valid non-negative amounts.");
+    }
+
+    return value;
+}
+
+function calculateCase() {
+
+    const errorBox = document.getElementById("error");
+    const results = document.getElementById("results");
+
+    errorBox.style.display = "none";
+
+    try {
+
+        const grossExposure = getValue("grossExposure");
+        const confirmedLoss = getValue("confirmedLoss");
+        const preventedLoss = getValue("preventedLoss");
+        const recovered = getValue("recovered");
+
+        const totalLoss =
+            confirmedLoss + preventedLoss;
+
+        const totalMitigation =
+            preventedLoss + recovered;
+
+        const remainingExposure =
+            grossExposure -
+            confirmedLoss -
+            preventedLoss -
+            recovered;
+
+        const recoveryRate =
+            confirmedLoss === 0
+                ? 0
+                : (recovered / confirmedLoss) * 100;
+
+        const preventionRate =
+            grossExposure === 0
+                ? 0
+                : (preventedLoss / grossExposure) * 100;
+
+        const mitigationRate =
+            grossExposure === 0
+                ? 0
+                : (totalMitigation / grossExposure) * 100;
+
+        document.getElementById("totalLoss").textContent =
+            money(totalLoss);
+
+        document.getElementById("totalMitigation").textContent =
+            money(totalMitigation);
+
+        document.getElementById("remainingExposure").textContent =
+            money(remainingExposure);
+
+        document.getElementById("recoveryRate").textContent =
+            recoveryRate.toFixed(2) + "%";
+
+        document.getElementById("preventionRate").textContent =
+            preventionRate.toFixed(2) + "%";
+
+        document.getElementById("mitigationRate").textContent =
+            mitigationRate.toFixed(2) + "%";
+
+        results.style.display = "block";
+
+    } catch (error) {
+
+        errorBox.textContent = error.message;
+        errorBox.style.display = "block";
+        results.style.display = "none";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
