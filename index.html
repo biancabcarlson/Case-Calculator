@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Calculator</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+  color: #17191c;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px 60px;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 13px;
+  border: 0;
+  border-radius: 7px;
+  background: #20252b;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.error {
+  display: none;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 7px;
+  background: #f8e7e7;
+  color: #9b2020;
+}
+
+.results {
+  display: none;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.metric {
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  padding: 16px;
+}
+
+.metric-name {
+  color: #666;
+  font-size: 13px;
+}
+
+.metric-value {
+  font-size: 21px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+.outcome {
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 650px) {
+  .grid,
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Case Calculator</h1>
+  <p class="subtitle">
+    Turn case figures into an immediate investigative impact snapshot.
+  </p>
+
+  <div class="card">
+
+    <div class="grid">
+
+      <div>
+        <label>Gross Exposure</label>
+        <input id="gross" type="number" min="0" step="0.01">
+      </div>
+
+      <div>
+        <label>Confirmed Loss</label>
+        <input id="loss" type="number" min="0" step="0.01">
+      </div>
+
+      <div>
+        <label>Prevented Loss</label>
+        <input id="prevented" type="number" min="0" step="0.01">
+      </div>
+
+      <div>
+        <label>Recovered Amount</label>
+        <input id="recovered" type="number" min="0" step="0.01">
+      </div>
+
+    </div>
+
+    <button onclick="calculate()">Calculate Case</button>
+
+    <div id="error" class="error"></div>
+
+  </div>
+
+  <div id="results" class="card results">
+
+    <div class="outcome">
+      Outcome: <span id="outcome"></span>
+    </div>
+
+    <div class="metrics">
+
+      <div class="metric">
+        <div class="metric-name">Gross Exposure</div>
+        <div id="grossResult" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Net Loss</div>
+        <div id="netLoss" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Prevented Loss</div>
+        <div id="preventedResult" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Loss Rate</div>
+        <div id="lossRate" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Prevention Rate</div>
+        <div id="preventionRate" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Recovery Rate</div>
+        <div id="recoveryRate" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Recovered Amount</div>
+        <div id="recoveredResult" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Remaining Exposure</div>
+        <div id="remaining" class="metric-value"></div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-name">Avoided Loss</div>
+        <div id="avoided" class="metric-value"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function value(id) {
+  return Number(document.getElementById(id).value) || 0;
+}
+
+function money(number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD"
+  }).format(number);
+}
+
+function percent(number) {
+  return number.toFixed(2) + "%";
+}
+
+function calculate() {
+
+  const gross = value("gross");
+  const loss = value("loss");
+  const prevented = value("prevented");
+  const recovered = value("recovered");
+
+  const error = document.getElementById("error");
+  const results = document.getElementById("results");
+
+  error.style.display = "none";
+
+  if (loss > gross) {
+    return showError("Confirmed loss cannot exceed gross exposure.");
+  }
+
+  if (prevented > gross) {
+    return showError("Prevented loss cannot exceed gross exposure.");
+  }
+
+  if (loss + prevented > gross) {
+    return showError(
+      "Confirmed loss plus prevented loss cannot exceed gross exposure."
+    );
+  }
+
+  if (recovered > loss) {
+    return showError(
+      "Recovered amount cannot exceed confirmed loss."
+    );
+  }
+
+  const netLoss = loss - recovered;
+
+  const lossRate =
+    gross === 0 ? 0 : (loss / gross) * 100;
+
+  const preventionRate =
+    gross === 0 ? 0 : (prevented / gross) * 100;
+
+  const recoveryRate =
+    loss === 0 ? 0 : (recovered / loss) * 100;
+
+  const remaining =
+    gross - loss - prevented;
+
+  let outcome = "Mitigated";
+
+  if (gross === 0) {
+    outcome = "No exposure";
+  } else if (netLoss === 0 && prevented > 0) {
+    outcome = "Fully mitigated";
+  } else if (prevented > 0 && netLoss > 0) {
+    outcome = "Partially mitigated";
+  } else if (loss > 0 && prevented === 0) {
+    outcome = "Loss realized";
+  } else if (loss === 0 && prevented === 0) {
+    outcome = "No realized impact";
+  }
+
+  document.getElementById("grossResult").textContent = money(gross);
+  document.getElementById("netLoss").textContent = money(netLoss);
+  document.getElementById("preventedResult").textContent = money(prevented);
+  document.getElementById("lossRate").textContent = percent(lossRate);
+  document.getElementById("preventionRate").textContent = percent(preventionRate);
+  document.getElementById("recoveryRate").textContent = percent(recoveryRate);
+  document.getElementById("recoveredResult").textContent = money(recovered);
+  document.getElementById("remaining").textContent = money(remaining);
+  document.getElementById("avoided").textContent = money(prevented);
+  document.getElementById("outcome").textContent = outcome;
+
+  results.style.display = "block";
+}
+
+function showError(message) {
+  const error = document.getElementById("error");
+
+  error.textContent = message;
+  error.style.display = "block";
+
+  document.getElementById("results").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
